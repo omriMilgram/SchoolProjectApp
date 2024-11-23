@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".RegistrationScreen">
+
+    <ImageView
+        android:id="@+id/ivMonkey"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="260dp"
+        android:src="@drawable/monkey" />
+
+    <EditText
+        android:id="@+id/etUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:inputType="text"
+        android:textSize="20dp"
+        android:hint="Please enter your name"
+        />
+
+    <EditText
+        android:id="@+id/etEmailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:hint="Please enter your email"
+        android:textSize="20dp"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:hint="Please enter your pasword"
+        android:layout_marginBottom="15dp"
+        android:textSize="20dp"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/etReTypePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:hint="Please Re-type pasword"
+        android:layout_marginBottom="15dp"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/etUserPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:hint="Please enter your phone number"
+        android:layout_marginBottom="15dp"
+        android:textSize="20dp"
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:textSize="25dp"
+        android:background="#6750A3"
+        android:textStyle="bold"
+        android:text="Register" />
+
+    <Button
+        android:id="@+id/btToLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Already registerd? Login->"
+        android:textColor="#3F51B5"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="40dp"
+        />
+</LinearLayout>
