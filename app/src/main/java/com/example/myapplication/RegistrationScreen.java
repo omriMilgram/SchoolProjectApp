@@ -5,16 +5,10 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import com.example.myapplication.HelperDB;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-
-
 
 
 public class RegistrationScreen extends AppCompatActivity {
@@ -30,8 +24,6 @@ public class RegistrationScreen extends AppCompatActivity {
     HelperDB helperDB = new HelperDB(this);
     SQLiteDatabase db;
 
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +31,6 @@ public class RegistrationScreen extends AppCompatActivity {
         db = helperDB.getWritableDatabase();
         HelperDB helperDB = new HelperDB(this);
         SQLiteDatabase db;
-
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_screen);
@@ -53,7 +43,6 @@ public class RegistrationScreen extends AppCompatActivity {
         button2 = findViewById(R.id.button2);
         btToLogin = findViewById(R.id.btToLogin);
 
-        UserDetails one = new UserDetails("omri", "0987654", "nmdhg@fdgdg", "0987654");
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,10 +52,8 @@ public class RegistrationScreen extends AppCompatActivity {
                 String userEmail = etEmailAddress.getText().toString();
                 String userPhone = etUserPhoneNumber.getText().toString();
 
-                one.setUserEmail(userEmail);
-                one.setUserName(username);
-                one.setUserPwd(userPwd);
-                one.setUserPhone(userPhone);
+
+                helperDB.insertUser(username, userEmail, userPwd, userPhone); // Save to database
 
                 Intent intent = new Intent(RegistrationScreen.this, LoginScreen.class);
                 startActivity(intent);
@@ -80,9 +67,5 @@ public class RegistrationScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
-
     }
 }

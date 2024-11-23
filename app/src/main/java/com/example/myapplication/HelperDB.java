@@ -1,68 +1,81 @@
 package com.example.myapplication;
-import android.content.Context; // ייבוא של Context
-import android.database.sqlite.SQLiteDatabase; // ייבוא של SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper; // ייבוא של SQLiteOpenHelper
+
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
-
-
-
 
 public class HelperDB extends SQLiteOpenHelper {
 
-    // שם קובץ בסיס הנתונים
-    public static final String DB_FILE = "lesson_in_chemistry.db";
-
-    // שם הטבלה
+    public static final String DB_FILE = "userManagement.db";
     public static final String USERS_TABLE = "Users";
-
-    // שמות העמודות בטבלה
     public static final String USER_NAME = "UserName";
     public static final String USER_PWD = "UserPassword";
     public static final String USER_EMAIL = "UserEmail";
     public static final String USER_PHONE = "UserPhone";
+    public static final int DATABASE_VERSION = 1;
+    private final Context context;
 
-    // בנאי
     public HelperDB(@Nullable Context context) {
-        super(context, DB_FILE, null, 1);
-
+        super(context, DB_FILE, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
-    //יוצרת טבלאות
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(buildUserTable());
-        // Create the users table with the specified columns and data types
         String createTable = "CREATE TABLE " + USERS_TABLE + " (" +
                 USER_NAME + " TEXT, " +
                 USER_EMAIL + " TEXT PRIMARY KEY, " +
                 USER_PWD + " TEXT, " +
                 USER_PHONE + " TEXT)";
         db.execSQL(createTable);
-
     }
 
     @Override
-    //משדרגת את בסיס הנתונים
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop the older table if it exists and recreate it
         db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE);
         onCreate(db);
     }
 
+    public void insertUser(String userName, String userEmail, String userPassword, String userPhone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_NAME, userName);
+        values.put(USER_EMAIL, userEmail);
+        values.put(USER_PWD, userPassword);
+        values.put(USER_PHONE, userPhone);
 
+        long result = db.insert(USERS_TABLE, null, values);
+        if (result == -1) {
+            Toast.makeText(context, "Failed to register user", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "User registered successfully", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @SuppressLint("Range")
+    public UserDetails getUserByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {USER_NAME, USER_PWD, USER_EMAIL, USER_PHONE};
+        String selection = USER_EMAIL + " = ?";
+        String[] selectionArgs = {email};
 
-    public String buildUserTable() {
+        Cursor cursor = db.query(USERS_TABLE, columns, selection, selectionArgs, null, null, null);
 
-        String st = "CREATE TABLE IF NOT EXISTS " + USERS_TABLE;
+        UserDetails user = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndex(USER_NAME));
+            String pwd = cursor.getString(cursor.getColumnIndex(USER_PWD));
+            String userEmail = cursor.getString(cursor.getColumnIndex(USER_EMAIL));
+            String phone = cursor.getString(cursor.getColumnIndex(USER_PHONE));
+            user = new UserDetails(name, pwd, userEmail, phone);
+            cursor.close();
+        }
 
-        st += "(" + USER_NAME + " TEXT, ";
-
-        st += USER_PWD + " TEXT, ";
-
-        st += USER_EMAIL + " TEXT, ";
-
-        st += USER_PHONE + " TEXT);";
-
-        return st;
+        return user;
     }
 }

@@ -17,6 +17,7 @@ public class LoginScreen extends AppCompatActivity {
     Button button;
     Button btToRegister;
     Button btBackToMain;
+    HelperDB helperDB = new HelperDB(this);
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -25,7 +26,6 @@ public class LoginScreen extends AppCompatActivity {
         setContentView(R.layout.activity_login_screen);
 
         Toast.makeText(getApplicationContext(), "welcome", Toast.LENGTH_SHORT).show();
-
 
         etEmailAddress = findViewById(R.id.etEmailAddress);
         etPassword = findViewById(R.id.etPassword);
@@ -36,13 +36,10 @@ public class LoginScreen extends AppCompatActivity {
         btToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(LoginScreen.this, RegistrationScreen.class);
                 startActivity(intent);
             }
         });
-
-        UserDetails two = new UserDetails("nhgdhyt565","omvre@gmail.com");
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +47,17 @@ public class LoginScreen extends AppCompatActivity {
                 String emailLogin = etEmailAddress.getText().toString();
                 String passwordLogin = etPassword.getText().toString();
 
-                two.setUserEmail(emailLogin);
-                two.setUserPwd(passwordLogin);
+                // Retrieve user data from the database based on email
+                UserDetails user = helperDB.getUserByEmail(emailLogin);
+
+                if (user != null && user.getUserPwd().equals(passwordLogin)) {
+                    // Login successful
+                    Toast.makeText(LoginScreen.this, "Login successful", Toast.LENGTH_SHORT).show();
+                    // Start the next activity or perform other actions
+                } else {
+                    // Login failed
+                    Toast.makeText(LoginScreen.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -62,6 +68,5 @@ public class LoginScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
