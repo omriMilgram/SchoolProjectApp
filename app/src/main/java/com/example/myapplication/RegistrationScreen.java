@@ -1,14 +1,21 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import com.example.myapplication.HelperDB;
+
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
+
 
 public class RegistrationScreen extends AppCompatActivity {
 
@@ -20,9 +27,21 @@ public class RegistrationScreen extends AppCompatActivity {
     Button button2;
     Button btToLogin;
 
+    HelperDB helperDB = new HelperDB(this);
+    SQLiteDatabase db;
+
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        db = helperDB.getWritableDatabase();
+        HelperDB helperDB = new HelperDB(this);
+        SQLiteDatabase db;
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_screen);
 

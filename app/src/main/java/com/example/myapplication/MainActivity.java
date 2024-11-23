@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvTitle;
     ImageView ivMonkey;
     Button btButtonToLogin;
-    TextView tvCountdownMain;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         tvTitle = findViewById(R.id.tvTitle);
         ivMonkey = findViewById(R.id.ivMonkey);
         btButtonToLogin = findViewById(R.id.btButtonToLogin);
-        tvCountdownMain = findViewById(R.id.tvCountdownMain);
 
 
 
@@ -42,21 +40,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        CountDownTimer countDownTimer = new CountDownTimer(7000 + 100, 1000) {
-            @Override
-            public void onTick(long l) {
-                Log.i("TAG", "onTick: Seconds until finished" + l/1000);
-                String stCountdown = l/1000 + "";
-                tvCountdownMain.setText("Start in: " + stCountdown + " seconds");
-            }
 
-            @Override
-            public void onFinish() {
-                tvCountdownMain.setText("done!");
-                btButtonToLogin.callOnClick();
-            }
-        }.start();
+
     }
-
-
 }
+
+
