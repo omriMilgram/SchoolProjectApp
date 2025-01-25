@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,8 @@ public class LoginFragment extends Fragment {
                 if (user != null && user.getUserPwd().equals(passwordLogin)) {
                     // Successful login
                     Toast.makeText(getActivity(), "Login successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), SuggestionScreen.class);
+                    startActivity(intent);
                     // Add additional code to start another Fragment or Activity if needed
                 } else {
                     // Invalid credentials
