@@ -47,7 +47,7 @@ public class ListOfMuseums extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(view -> {
             // חזרה למסך הקודם (המסך בו היה ה-RecyclerView)
-            Intent intent = new Intent(ListOfMuseums.this, RecyclerView.class);
+            Intent intent = new Intent(ListOfMuseums.this, ActivitiesRecyclerViewActivity.class);
             startActivity(intent);
         });
     }

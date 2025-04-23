@@ -91,7 +91,7 @@ public class SuggestionScreen extends AppCompatActivity {
         btActivityList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SuggestionScreen.this, RecyclerView.class);
+                Intent intent = new Intent(SuggestionScreen.this, ActivitiesRecyclerViewActivity.class);
                 startActivity(intent);
             }
         });

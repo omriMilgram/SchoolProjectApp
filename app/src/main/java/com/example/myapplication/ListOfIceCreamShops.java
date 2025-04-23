@@ -47,7 +47,7 @@ public class ListOfIceCreamShops extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(view -> {
             // חזרה למסך הקודם
-            Intent intent = new Intent(ListOfIceCreamShops.this, RecyclerView.class);
+            Intent intent = new Intent(ListOfIceCreamShops.this, ActivitiesRecyclerViewActivity.class);
             startActivity(intent);
         });
     }

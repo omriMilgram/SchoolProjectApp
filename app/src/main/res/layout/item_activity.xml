@@ -1,22 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="#CFD5DA">
 
+    <!-- תמונה מייצגת של הפעילות -->
     <ImageView
-        android:id="@+id/activityImage"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/monkey" />
+        android:id="@+id/imageViewBookImage"
+        android:layout_width="60dp"
+        android:layout_height="80dp"
+        android:src="@drawable/monkey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- שם הפעילות -->
     <TextView
-        android:id="@+id/activityTitle"
+        android:id="@+id/textViewBookName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="שם הפעילות"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/imageViewBookImage"
+        app:layout_constraintTop_toTopOf="@id/imageViewBookImage"
+        app:layout_constraintEnd_toStartOf="@+id/buttonInfo" />
+
+    <!-- סוג הפעילות -->
+    <TextView
+        android:id="@+id/textViewType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="סוג הפעילות"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/textViewBookName"
+        app:layout_constraintStart_toStartOf="@id/textViewBookName"
+        app:layout_constraintEnd_toStartOf="@+id/buttonInfo" />
+
+    <!-- כפתור לפרטים נוספים -->
+    <Button
+        android:id="@+id/buttonInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:text="Title" />
-</LinearLayout>
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="פרטים"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#3F51B5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewBookImage"
+        app:layout_constraintTop_toTopOf="@id/imageViewBookImage" />
+
+    <!-- קו מפריד -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@id/imageViewBookImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

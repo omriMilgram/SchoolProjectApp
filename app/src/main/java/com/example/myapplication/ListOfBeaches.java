@@ -46,7 +46,7 @@ public class ListOfBeaches extends AppCompatActivity {
         Button btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(view -> {
             // חזרה למסך הקודם (RecyclerView)
-            Intent intent = new Intent(ListOfBeaches.this, RecyclerView.class);
+            Intent intent = new Intent(ListOfBeaches.this, ActivitiesRecyclerViewActivity.class);
             startActivity(intent);
         });
     }

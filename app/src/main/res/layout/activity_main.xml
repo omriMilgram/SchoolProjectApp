@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- תמונה לרקע -->
+    <!-- רקע -->
     <ImageView
         android:id="@+id/backgroundImageView"
         android:layout_width="match_parent"
@@ -14,39 +14,50 @@
         android:scaleType="centerCrop"
         android:src="@drawable/backround2" />
 
-    <!-- תוכן המוצג מעל הרקע -->
+    <!-- שכבת כהות עדינה לקריאות -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000" />
+
+    <!-- תוכן -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="32dp"
         android:gravity="center">
 
         <!-- כותרת -->
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="370dp"
-            android:gravity="center"
-            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="IsraVenture"
-            android:textColor="#3F51B5"
-            android:textSize="40dp"
-            android:textStyle="bold" />
-
-        <!-- כפתור למסך login-->
-        <Button
-            android:id="@+id/btButtonToLogin"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="next"
             android:textColor="#FFFFFF"
-            android:textSize="40dp"
-            android:textStyle="bold" />
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:layout_marginBottom="32dp" />
+
+        <!-- כפתור התחלה -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btButtonToLogin"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_500"
+            app:cornerRadius="16dp"
+            android:elevation="8dp"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp" />
     </LinearLayout>
 </FrameLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166146349898",
+    "project_id": "israventureapp",
+    "storage_bucket": "israventureapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166146349898:android:f45a9a6af567e397937fb3",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIgaHVl_9RAeex4tCyWQy94ifsQ2B853s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

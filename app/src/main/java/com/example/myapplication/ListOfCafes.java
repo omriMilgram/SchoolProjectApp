@@ -47,7 +47,7 @@ public class ListOfCafes extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(view -> {
             // חזרה למסך הקודם (RecyclerView)
-            Intent intent = new Intent(ListOfCafes.this, RecyclerView.class);
+            Intent intent = new Intent(ListOfCafes.this, ActivitiesRecyclerViewActivity.class);
             startActivity(intent);
         });
     }
