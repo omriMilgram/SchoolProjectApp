@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Permissions for accessing storage, camera, notifications, etc. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Feature declarations -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
@@ -27,53 +22,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+
+        <service
+            android:name=".SoundService"
+            android:exported="false"
+            android:enabled="true" />
+
+        <activity
+            android:name=".AdminScreen"
+            android:exported="false" />
         <activity
             android:name=".InfoScreen"
             android:exported="false" />
-        <activity
-            android:name=".API_For_Check"
-            android:exported="false" />
-        <activity
-            android:name=".ListOfMuseums"
-            android:exported="false" />
-        <activity
-            android:name=".ListOfIceCreamShops"
-            android:exported="false" />
-        <activity
-            android:name=".ListOfCafes"
-            android:exported="false" />
-        <activity
-            android:name=".ListOfBeaches"
-            android:exported="false" /> <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- RecyclerView Activity -->
-        <!-- Suggestion Activity -->
+        </activity>
         <activity
             android:name=".SuggestionScreen"
-            android:exported="false" /> <!-- Login and Registration Activities -->
+            android:exported="false" />
         <activity
             android:name=".Login"
             android:exported="false" />
         <activity
-            android:name=".RegistrationScreen"
-            android:exported="false" />
-        <activity
-            android:name=".LoginScreen"
-            android:exported="false" />
-        <activity
             android:name=".ActivitiesRecyclerViewActivity"
             android:exported="true"
-            android:label="RecyclerView Activity" /> <!-- Broadcast Receiver -->
-        <receiver
-            android:name=".ScheduleBroadCastReceiver"
-            android:exported="false" /> <!-- File Provider -->
+            android:label="RecyclerView Activity" />
+
+        <!-- File Provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.captureimage.fileprovider"
@@ -83,6 +63,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
 </manifest>

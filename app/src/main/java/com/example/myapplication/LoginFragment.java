@@ -61,6 +61,15 @@ public class LoginFragment extends Fragment {
                 String emailLogin = etEmailAddress.getText().toString();  // Get entered email
                 String passwordLogin = etPassword.getText().toString();  // Get entered password
 
+                // Check for admin login first
+                if (emailLogin.equals("ad") && passwordLogin.equals("ad")) {
+                    Toast.makeText(getActivity(), "Admin login successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), AdminScreen.class); // מסך מנהל שתיצור
+                    startActivity(intent);
+                    return; // מאוד חשוב: לעצור כאן כדי שלא ימשיך לבדוק במסד הנתונים
+                }
+
+
                 // Fetch user details from the database based on email
                 UserDetails user = helperDB.getUserByEmail(emailLogin);
 

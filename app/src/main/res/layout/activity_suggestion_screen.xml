@@ -43,10 +43,11 @@
                 android:id="@+id/tvWeather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="todo: to connect to weather API"
+                android:text="Temp: 99.99°C"
                 android:textSize="18sp"
                 android:textColor="@android:color/white"
                 android:layout_marginTop="24dp"
+                android:textStyle="bold"
                 android:layout_gravity="start" />
 
             <!-- כותרת למסך הצעה -->
@@ -55,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Suggested Activities"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -67,7 +68,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="20dp"
                 android:layout_gravity="center"
-                android:src="@drawable/monkey"
+                android:src="@drawable/logoappnew"
                 android:visibility="visible" />
 
             <!-- כפתור מעבר לרשימת פעילויות -->
@@ -78,10 +79,10 @@
                 android:layout_marginTop="30dp"
                 android:text="Go to Activity List"
                 android:textColor="@android:color/white"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:backgroundTint="#512DA8"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
 
             <!-- כפתור לצילום תמונה -->
             <Button
@@ -90,10 +91,10 @@
                 android:layout_height="80dp"
                 android:text="Take A Picture"
                 android:textColor="@android:color/white"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:backgroundTint="#03A9F4"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
 
             <!-- כפתור לשמירת תמונה בגלריה -->
             <Button
@@ -102,11 +103,26 @@
                 android:layout_height="80dp"
                 android:text="Save to Gallery"
                 android:textColor="@android:color/white"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:backgroundTint="#4CAF50"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- כפתור חזור בפינה הימנית התחתונה -->
+    <Button
+        android:id="@+id/btButtonBackToLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:textColor="#000000"
+        android:backgroundTint="#80FFFFFF"
+        android:layout_margin="16dp"
+        app:cornerRadius="16dp"
+        app:strokeColor="#BDBDBD"
+        app:strokeWidth="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

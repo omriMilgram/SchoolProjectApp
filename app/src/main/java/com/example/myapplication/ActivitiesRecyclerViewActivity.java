@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,21 +14,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
 
     EditText nameSearch, genreSearch;
     Context context;
-    Button ByName, ByGenre, buttonShowAll;
-
-    RecyclerView ActivitiesListRV;
+    Button searchByNameButton, buttonSearchByType, showAllButton, btBackToSuggestion;
+    TextView textViewWeather;
+    RecyclerView activitiesRecyclerView;
     ActivityAdapter adapter;
-    List<ActivitiesFeatures> ActivityList;
+    List<ActivitiesFeatures> data = new ArrayList<>();
     FirebaseFirestore db;
+
+    private static final String TAG = "API_For_Check";
+    private static final String API_KEY = "4af745b948b1c2b9184c06d8aa357ec0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,105 +44,132 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
         context = this;
         db = FirebaseFirestore.getInstance();
 
-        ByName = findViewById(R.id.buttonSearchByName);
-        ByGenre = findViewById(R.id.buttonSearchByGenre);
+        searchByNameButton = findViewById(R.id.buttonSearchByName);
+        buttonSearchByType = findViewById(R.id.buttonSearchByType);
+        showAllButton = findViewById(R.id.buttonShowAll);
         nameSearch = findViewById(R.id.editTextSearchByName);
-        genreSearch = findViewById(R.id.editTextSearchByGenre);
-        buttonShowAll = findViewById(R.id.buttonShowAll);
+        genreSearch = findViewById(R.id.editTextSearchByType);
+        activitiesRecyclerView = findViewById(R.id.recyclerViewActivitiesList);
+        textViewWeather = findViewById(R.id.textViewWeather);
+        btBackToSuggestion = findViewById(R.id.btBackToSuggestion);
 
-        ActivitiesListRV = findViewById(R.id.recyclerViewActivitiesList);
-        ActivityList = new ArrayList<>();
-        adapter = new ActivityAdapter(ActivityList);
-        ActivitiesListRV.setHasFixedSize(true);
-        ActivitiesListRV.setLayoutManager(new LinearLayoutManager(this));
-        ActivitiesListRV.setAdapter(adapter);
+        activitiesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ActivityAdapter(this, data);
+        activitiesRecyclerView.setAdapter(adapter);
 
+        makeData();
 
-        getAll();
+        searchByNameButton.setOnClickListener(v -> searchByName());
+        buttonSearchByType.setOnClickListener(v -> searchByGenre());
+        showAllButton.setOnClickListener(v -> showAllActivities());
+        btBackToSuggestion.setOnClickListener(v -> finish());
 
-        ByName.setOnClickListener(view -> {
-            String name = nameSearch.getText().toString();
-            if (name.isEmpty()) {
-                Toast.makeText(context, "Search can't be empty", Toast.LENGTH_SHORT).show();
-            } else {
-                filterByName(name);
+        // Weather API
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<WeatherResponse> call = apiService.getWeatherData("Tel Aviv", "metric", API_KEY);
+
+        call.enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    WeatherResponse weather = response.body();
+                    double temp = weather.getMain().getTemp();
+                    String result = "Temp: " + temp + "°C";
+                    textViewWeather.setText(result);
+                } else {
+                    textViewWeather.setText("Error retrieving data. Code: " + response.code());
+                    Log.e(TAG, "API Response Error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                textViewWeather.setText("API Error: " + t.getMessage());
+                Log.e(TAG, "API Call Failure", t);
             }
         });
-
-
-        ByGenre.setOnClickListener(view -> {
-            String genre = genreSearch.getText().toString();
-            if (genre.isEmpty()) {
-                Toast.makeText(context, "Search can't be empty", Toast.LENGTH_SHORT).show();
-            } else {
-                filterByGenre(genre);
-            }
-        });
-
-        buttonShowAll.setOnClickListener(v -> adapter.updateData(ActivityList));
     }
 
-    public void getAll() {
+    public void makeData() {
         db.collection("Activities")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        QuerySnapshot snapshot = task.getResult();
-
-                        if (snapshot == null || snapshot.isEmpty()) {
-                            Toast.makeText(context, "No activities found", Toast.LENGTH_SHORT).show();
-                            ActivityList.clear();
-                            adapter.updateData(ActivityList);
-                            return;
+                        data.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, "Loaded activity: " + document.getData());
+                            try {
+                                ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
+                                data.add(activity);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error converting document: " + e.getMessage());
+                            }
                         }
-
-                        ActivityList.clear();
-
-                        for (QueryDocumentSnapshot document : snapshot) {
-                            String name = document.getString("ActivityName");
-                            String location = document.getString("Location");
-                            String prices = document.getString("PricesInArea");
-                            String target = document.getString("TargetAudience");
-                            String about = document.getString("about");
-                            String type = document.getString("type");
-
-                            if (name == null) name = "No name";
-                            if (location == null) location = "Unknown location";
-                            if (prices == null) prices = "Unknown prices";
-                            if (target == null) target = "Unknown audience";
-                            if (about == null) about = "";
-                            if (type == null) type = "Other";
-
-                            ActivitiesFeatures activity = new ActivitiesFeatures(name, location, prices, target, about, type);
-                            ActivityList.add(activity);
-                        }
-
-                        adapter.updateData(ActivityList);
+                        adapter.updateData(data);
                     } else {
-                        Toast.makeText(context, "Failed to load activities: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("FIREBASE", "Error loading activities", task.getException());
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                        Toast.makeText(context, "Error loading activities", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .addOnFailureListener(e -> Log.e("FIREBASE", "Firestore get() failed: ", e));
+                });
     }
 
-    public void filterByName(String name) {
-        List<ActivitiesFeatures> res = new ArrayList<>();
-        for (ActivitiesFeatures activity : ActivityList) {
-            if (activity.getActivityName().equalsIgnoreCase(name)) {
-                res.add(activity);
-            }
+    public void searchByName() {
+        String nameQuery = nameSearch.getText().toString().trim();
+        if (!nameQuery.isEmpty()) {
+            db.collection("Activities")
+                    .whereEqualTo("ActivityName", nameQuery)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            data.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                try {
+                                    ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
+                                    data.add(activity);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error converting document: " + e.getMessage());
+                                }
+                            }
+                            adapter.updateData(data);
+                        } else {
+                            Log.w(TAG, "Error searching by name.", task.getException());
+                            Toast.makeText(context, "Error searching by name", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(context, "Please enter a name", Toast.LENGTH_SHORT).show();
         }
-        adapter.updateData(res);
     }
 
-    public void filterByGenre(String genre) {
-        List<ActivitiesFeatures> res = new ArrayList<>();
-        for (ActivitiesFeatures activity : ActivityList) {
-            if (activity.getType().equalsIgnoreCase(genre)) {
-                res.add(activity);
-            }
+    public void searchByGenre() {
+        String genreQuery = genreSearch.getText().toString().trim();
+        if (!genreQuery.isEmpty()) {
+            db.collection("Activities")
+                    .whereEqualTo("type", genreQuery)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            data.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                try {
+                                    ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
+                                    data.add(activity);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error converting document: " + e.getMessage());
+                                }
+                            }
+                            adapter.updateData(data);
+                        } else {
+                            Log.w(TAG, "Error searching by genre.", task.getException());
+                            Toast.makeText(context, "Error searching by genre", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(context, "Please enter a genre", Toast.LENGTH_SHORT).show();
         }
-        adapter.updateData(res);
+    }
+
+    public void showAllActivities() {
+        makeData(); // Reload data from the database
     }
 }

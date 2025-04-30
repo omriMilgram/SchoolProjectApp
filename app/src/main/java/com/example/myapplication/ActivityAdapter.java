@@ -1,46 +1,77 @@
 package com.example.myapplication;
 
-import android.util.Log;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.MyViewHolder> {
-
+public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
 
     private List<ActivitiesFeatures> activityList;
+    private Context context;
 
-    public ActivityAdapter(List<ActivitiesFeatures> activityList) {
+    public ActivityAdapter(Context context, List<ActivitiesFeatures> activityList) {
+        this.context = context;
         this.activityList = activityList;
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ActivityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_activity, parent, false);
-        return new MyViewHolder(view);
+        return new ActivityViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ActivityViewHolder holder, int position) {
         ActivitiesFeatures activity = activityList.get(position);
-        Log.d("ADAPTER", "Binding data for position: " + position);
-        Log.d("ADAPTER", "Activity name: " + activity.getActivityName());
-        holder.name.setText(activity.getActivityName());
-        holder.type.setText(activity.getType());
-        Log.d("ADAPTER", "Name: " + activity.getActivityName() + ", Type: " + activity.getType());
-        Log.d("ADAPTER", "Activity Name: " + activity.getActivityName() + ", Type: " + activity.getType());
+
+        holder.textViewName.setText(activity.getActivityName());
+        holder.textViewType.setText(activity.getType());
+
+        holder.buttonInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(context, InfoScreen.class);
+            intent.putExtra("activityName", activity.getActivityName());
+            intent.putExtra("activityType", activity.getType());
+            context.startActivity(intent);
+        });
+
+        String imageUrl = activity.getImageLink();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.logoappnew)
+                    .error(R.drawable.logoappnew)
+                    .into(holder.imageViewActivityImage);
+        } else {
+            holder.imageViewActivityImage.setImageResource(R.drawable.logoappnew);
+        }
+
+        // שליפת SharedPreferences לבדיקה אם הפעילות בוצעה
+        SharedPreferences prefs = context.getSharedPreferences("VisitedPrefs", Context.MODE_PRIVATE);
+        boolean visited = prefs.getBoolean(activity.getActivityName(), false);
+
+// שינוי צבע הכפתור לפי האם ביקר
+        if (visited) {
+            holder.buttonInfo.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.holo_red_dark));
+        } else {
+            holder.buttonInfo.setBackgroundTintList(ContextCompat.getColorStateList(context, android.R.color.holo_green_dark));
+        }
+
+
     }
 
     @Override
@@ -48,59 +79,23 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.MyView
         return activityList.size();
     }
 
-    // הוספת הפונקציה הזו
     public void updateData(List<ActivitiesFeatures> newList) {
-        activityList.clear();
-        activityList.addAll(newList);
+        this.activityList = newList;
         notifyDataSetChanged();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, type;
+    public static class ActivityViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewName, textViewType;
         Button buttonInfo;
+        ImageView imageViewActivityImage;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.textViewBookName);
-            type = itemView.findViewById(R.id.textViewType);
+            textViewName = itemView.findViewById(R.id.textViewActivityName);
+            textViewType = itemView.findViewById(R.id.textViewType);
             buttonInfo = itemView.findViewById(R.id.buttonInfo);
+            imageViewActivityImage = itemView.findViewById(R.id.imageViewActivityImage);
+
         }
-    }
-
-    // נוסיף את המתודה הזו כדי לטעון נתונים מ-Firebase
-    public static void loadActivitiesFromFirebase(RecyclerView recyclerView, ActivityAdapter adapter) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Log.d("FIREBASE", "DB instance: " + db);
-        db.collection("activities")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<ActivitiesFeatures> newActivityList = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String activityName = document.getString("ActivityName");
-                            String about = document.getString("about");
-                            String pricesInArea = document.getString("PricesInArea");
-                            String type = document.getString("type");
-                            String targetAudience = document.getString("TargetAudience");
-                            String location = document.getString("Location");
-
-                            ActivitiesFeatures activity = new ActivitiesFeatures(activityName, about, pricesInArea, type, targetAudience, location);
-                            newActivityList.add(activity);
-
-                            // הצגת נתונים ב-Log
-                            Log.d("FIREBASE", "Loaded activity: " + activityName);
-                        }
-
-                        // עדכון ה-Adapter עם הנתונים החדשים
-                        adapter.updateData(newActivityList);
-
-                        // הצגת נתונים ב-Log אם הרישום ריק
-                        if (newActivityList.isEmpty()) {
-                            Log.d("FIREBASE", "ActivityList is empty after loading.");
-                        }
-                    } else {
-                        Log.w("FIREBASE", "Error getting documents.", task.getException());
-                    }
-                });
     }
 }

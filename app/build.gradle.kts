@@ -41,7 +41,7 @@ dependencies {
     implementation("androidx.sqlite:sqlite:2.4.0")
 
 
-    // 🔽 הוספת ספריות Retrofit מהשקופית
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.core:core-ktx:1.12.0")

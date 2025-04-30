@@ -5,12 +5,16 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -24,14 +28,21 @@ import androidx.core.content.ContextCompat;
 
 import java.io.OutputStream;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SuggestionScreen extends AppCompatActivity {
 
     ImageView ivPhoto;
-    Button btCamera, btSavePicture, btActivityList; // הוספת כפתור למעבר לרשימה
+    Button btCamera, btSavePicture, btActivityList, btButtonBackToLogin; // הוספת כפתור למעבר לרשימה
     ActivityResultLauncher<Intent> arSmall;
     Bitmap currentBitmap; // משתנה לשמירת התמונה שצולמה
+    TextView tvWeather;
 
     private static final int CAMERA_PERMISSION_CODE = 100;
+    private static final String TAG = "API_For_Check";
+    private static final String API_KEY = "4af745b948b1c2b9184c06d8aa357ec0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +54,16 @@ public class SuggestionScreen extends AppCompatActivity {
         btSavePicture = findViewById(R.id.btButtonSavePicture);
         btActivityList = findViewById(R.id.btButtonToActivityList); // כפתור למעבר לרשימה
         ivPhoto = findViewById(R.id.imageView);
+        tvWeather = findViewById(R.id.tvWeather);
+        btButtonBackToLogin = findViewById(R.id.btButtonBackToLogin);
+
+        btButtonBackToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // סוגר את המסך הנוכחי
+            }
+        });
+
 
         // רישום ה-ActivityResultLauncher
         arSmall = registerForActivityResult(
@@ -93,6 +114,30 @@ public class SuggestionScreen extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SuggestionScreen.this, ActivitiesRecyclerViewActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<WeatherResponse> call = apiService.getWeatherData("Tel Aviv", "metric", API_KEY);
+
+        call.enqueue(new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    WeatherResponse weather = response.body();
+                    double temp = weather.getMain().getTemp(); // temperature only
+                    String result = "Temp: " + temp + "°C"; // display temperature only
+                    tvWeather.setText(result);
+                } else {
+                    tvWeather.setText("Error retrieving data from server. Code:  " + response.code());
+                    Log.e(TAG, "API Response Error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                tvWeather.setText("API Response Error: " + t.getMessage());
+                Log.e(TAG, "API Call Failure", t);
             }
         });
     }
