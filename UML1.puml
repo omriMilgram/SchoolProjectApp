@@ -1,0 +1,250 @@
+@startuml
+class com.example.myapplication.MainActivity {
+~ TextView tvTitle
+~ ImageView backgroundImageView
+~ Button btButtonToLogin
+~ Context context
+~ String message
+- {static} int NOTIFICATION_PERMISSION_CODE
+- {static} int EXACT_ALARM_SETTINGS_CODE
+- ActivityResultLauncher<String> requestPermissionLauncher
+- ActivityResultLauncher<Intent> startForResult
+- ActivityResultLauncher<Intent> exactAlarmSettingsLauncher
+# void onCreate(Bundle)
+- void showNotificationPermissionDialog()
+- void checkAndRequestNotificationPermission()
++ void onRequestPermissionsResult(int,String[],int[])
+- void showPermissionDeniedDialog()
+- void openAppSettings()
+- void openNotificationSettings()
+- void showExactAlarmPermissionDialog()
+- void openExactAlarmSettings()
+- void scheduleDailyAlarm()
+- void createNotificationChannel()
+}
+
+
+class com.example.myapplication.SoundService {
+- {static} MediaPlayer mediaPlayer
++ int onStartCommand(Intent,int,int)
++ void onDestroy()
++ IBinder onBind(Intent)
+}
+
+
+class com.example.myapplication.WeatherResponse {
+- String cityName
+- Main main
+- List<Weather> weatherList
++ String getCityName()
++ Main getMain()
++ List<Weather> getWeatherList()
+}
+
+
+class com.example.myapplication.WeatherResponse$Main {
+- double temp
++ double getTemp()
+}
+
+
+class com.example.myapplication.WeatherResponse$Weather {
+- String description
++ String getDescription()
+}
+
+
+class com.example.myapplication.ActivitiesFeatures {
+- String ActivityName
+- String Location
+- String LocationLink
+- String PricesInArea
+- String TargetAudience
+- String about
+- String imageLink
+- String type
++ String getActivityName()
++ void setActivityName(String)
++ String getLocation()
++ void setLocation(String)
++ String getPricesInArea()
++ void setPricesInArea(String)
++ String getTargetAudience()
++ void setTargetAudience(String)
++ String getAbout()
++ void setAbout(String)
++ String getType()
++ void setType(String)
++ String getLocationLink()
++ void setLocationLink(String)
++ String getImageLink()
++ void setImageLink(String)
+}
+
+
+class com.example.myapplication.UserDetails {
+- String userName
+- String userPwd
+- String userEmail
+- String userPhone
++ String getUserName()
++ void setUserName(String)
++ String getUserPwd()
++ void setUserPwd(String)
++ String getUserEmail()
++ void setUserEmail(String)
++ String getUserPhone()
++ void setUserPhone(String)
+}
+
+
+interface com.example.myapplication.ApiService {
+~ Call<WeatherResponse> getWeatherData(String,String,String)
+}
+
+class com.example.myapplication.RegisterFragment {
+~ EditText etUserName
+~ EditText etEmailAddress
+~ EditText etPassword
+~ EditText etReTypePassword
+~ EditText etUserPhoneNumber
+~ Button Register
+~ Button btToLogin
+~ HelperDB helperDB
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.example.myapplication.InfoScreen {
+~ FirebaseFirestore db
+~ TextView tvActivityName
+~ ImageView ivActivityImage
+~ Button btnBack
+# void onCreate(Bundle)
+- void updateVisitedButton(Button,boolean)
+}
+
+
+class com.example.myapplication.ActivitiesRecyclerViewActivity {
+~ EditText nameSearch
+~ Context context
+~ Button searchByNameButton
+~ TextView textViewWeather
+~ RecyclerView activitiesRecyclerView
+~ ActivityAdapter adapter
+~ List<ActivitiesFeatures> data
+~ FirebaseFirestore db
+- {static} String TAG
+- {static} String API_KEY
+# void onCreate(Bundle)
++ void makeData()
++ void searchByName()
++ void searchByGenre()
++ void showAllActivities()
+}
+
+
+class com.example.myapplication.ActivityAdapter {
+- List<ActivitiesFeatures> activityList
+- Context context
++ ActivityViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ActivityViewHolder,int)
++ int getItemCount()
++ void updateData(List<ActivitiesFeatures>)
+}
+
+
+class com.example.myapplication.ActivityAdapter$ActivityViewHolder {
+~ TextView textViewName
+~ Button buttonInfo
+~ ImageView imageViewActivityImage
+}
+
+class com.example.myapplication.SuggestionScreen {
+~ ImageView ivPhoto
+~ Button btCamera
+~ ActivityResultLauncher<Intent> arSmall
+~ Bitmap currentBitmap
+~ TextView tvWeather
+- {static} int CAMERA_PERMISSION_CODE
+- {static} String TAG
+- {static} String API_KEY
+# void onCreate(Bundle)
+- boolean checkCameraPermission()
+- void requestCameraPermission()
++ void onRequestPermissionsResult(int,String[],int[])
+- void saveImageToGallery(Bitmap)
+}
+
+
+class com.example.myapplication.LoginFragment {
+~ EditText etEmailAddress
+~ EditText etPassword
+~ Button button
+~ Button btToRegister
+~ Button btBackToMain
+~ HelperDB helperDB
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.example.myapplication.HelperDB {
++ {static} String DB_FILE
++ {static} String USERS_TABLE
++ {static} String USER_NAME
++ {static} String USER_PWD
++ {static} String USER_EMAIL
++ {static} String USER_PHONE
++ {static} int DATABASE_VERSION
+- Context context
++ void onCreate(SQLiteDatabase)
++ void onUpgrade(SQLiteDatabase,int,int)
++ void insertUser(String,String,String,String)
++ UserDetails getUserByEmail(String)
++ void fetchData()
+}
+
+
+class com.example.myapplication.Login {
+# void onCreate(Bundle)
+}
+
+class com.example.myapplication.ScheduleBroadCastReceiver {
++ void onReceive(Context,Intent)
+}
+
+class com.example.myapplication.AdminScreen {
+~ EditText etActivityName
+~ Button btSaveActivity
+# void onCreate(Bundle)
+- void saveActivity()
+- void clearFields()
+}
+
+
+class com.example.myapplication.RetrofitClient {
+- {static} String BASE_URL
+- {static} Retrofit retrofit
++ {static} Retrofit getClient()
+}
+
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.MainActivity
+android.app.Service <|-- com.example.myapplication.SoundService
+com.example.myapplication.WeatherResponse +.. com.example.myapplication.WeatherResponse$Main
+com.example.myapplication.WeatherResponse +.. com.example.myapplication.WeatherResponse$Weather
+androidx.fragment.app.Fragment <|-- com.example.myapplication.RegisterFragment
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.InfoScreen
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.ActivitiesRecyclerViewActivity
+com.example.myapplication.Adapter <|-- com.example.myapplication.ActivityAdapter
+com.example.myapplication.ActivityAdapter +.. com.example.myapplication.ActivityAdapter$ActivityViewHolder
+com.example.myapplication.ViewHolder <|-- com.example.myapplication.ActivityAdapter$ActivityViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.SuggestionScreen
+androidx.fragment.app.Fragment <|-- com.example.myapplication.LoginFragment
+android.database.sqlite.SQLiteOpenHelper <|-- com.example.myapplication.HelperDB
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.Login
+android.content.BroadcastReceiver <|-- com.example.myapplication.ScheduleBroadCastReceiver
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.AdminScreen
+@enduml

@@ -1,0 +1,217 @@
+@startuml
+class com.example.myapplication.MainActivity {
+~ TextView tvTitle
+~ ImageView backgroundImageView
+~ Button btButtonToLogin
+~ Context context
+~ String message
+# void onCreate(Bundle)
+- void showNotificationPermissionDialog()
+- void scheduleDailyAlarm()
+- void createNotificationChannel()
+}
+
+
+class com.example.myapplication.ListOfIceCreamShops {
+~ ArrayList<NameActivity> iceCreamShops
+~ ListView lvIceCreamShops
+~ ArrayAdapter<NameActivity> adapter
+~ Button btnBack
+# void onCreate(Bundle)
++ void fillData()
+}
+
+
+class com.example.myapplication.RegistrationScreen {
+~ EditText etUserName
+~ EditText etEmailAddress
+~ EditText etPassword
+~ EditText etReTypePassword
+~ EditText etUserPhoneNumber
+~ Button button2
+~ Button btToLogin
+~ HelperDB helperDB
+~ SQLiteDatabase db
+# void onCreate(Bundle)
+}
+
+
+class com.example.myapplication.RecyclerView {
+- androidx.recyclerview.widget.RecyclerView recyclerView
+- ActivityAdapter adapter
+# void onCreate(Bundle)
+}
+
+
+class com.example.myapplication.ListOfMuseums {
+~ ArrayList<NameActivity> museums
+~ ListView lvMuseums
+~ ArrayAdapter<NameActivity> adapter
+~ Button btnBack
+# void onCreate(Bundle)
++ void fillData()
+}
+
+
+class com.example.myapplication.LoginScreen {
+~ EditText etEmailAddress
+~ EditText etPassword
+~ Button button
+~ Button btToRegister
+~ Button btBackToMain
+~ HelperDB helperDB
+# void onCreate(Bundle)
+}
+
+
+class com.example.myapplication.NameActivity {
+- String nameActivity
++ String getNameActivity()
++ void setNameActivity(String)
++ String toString()
+}
+
+
+class com.example.myapplication.UserDetails {
+- String userName
+- String userPwd
+- String userEmail
+- String userPhone
++ String getUserName()
++ void setUserName(String)
++ String getUserPwd()
++ void setUserPwd(String)
++ String getUserEmail()
++ void setUserEmail(String)
++ String getUserPhone()
++ void setUserPhone(String)
+}
+
+
+class com.example.myapplication.ListOfCafes {
+~ ArrayList<NameActivity> cafes
+~ ListView lvCafes
+~ ArrayAdapter<NameActivity> adapter
+~ Button btnBack
+# void onCreate(Bundle)
++ void fillData()
+}
+
+
+class com.example.myapplication.RegisterFragment {
+~ EditText etUserName
+~ EditText etEmailAddress
+~ EditText etPassword
+~ EditText etReTypePassword
+~ EditText etUserPhoneNumber
+~ Button button2
+~ Button btToLogin
+~ HelperDB helperDB
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.example.myapplication.item_activity {
+# void onCreate(Bundle)
+}
+
+class com.example.myapplication.ActivityAdapter {
+- List<String> activityList
+- Context context
+- OnItemClickListener listener
++ ViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ViewHolder,int)
++ int getItemCount()
+}
+
+
+interface com.example.myapplication.ActivityAdapter$OnItemClickListener {
+~ void onItemClick(int)
+}
+
+class com.example.myapplication.ActivityAdapter$ViewHolder {
+~ TextView activityTitle
+~ ImageView activityImage
+}
+
+class com.example.myapplication.ListOfBeaches {
+~ ArrayList<NameActivity> beaches
+~ ListView lvBeaches
+~ ArrayAdapter<NameActivity> adapter
+# void onCreate(Bundle)
++ void fillData()
+}
+
+
+class com.example.myapplication.SuggestionScreen {
+~ ImageView ivPhoto
+~ Button btCamera
+~ ActivityResultLauncher<Intent> arSmall
+~ Bitmap currentBitmap
+- {static} int CAMERA_PERMISSION_CODE
+# void onCreate(Bundle)
+- boolean checkCameraPermission()
+- void requestCameraPermission()
++ void onRequestPermissionsResult(int,String[],int[])
+- void saveImageToGallery(Bitmap)
+}
+
+
+class com.example.myapplication.LoginFragment {
+~ EditText etEmailAddress
+~ EditText etPassword
+~ Button button
+~ Button btToRegister
+~ Button btBackToMain
+~ HelperDB helperDB
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.example.myapplication.HelperDB {
++ {static} String DB_FILE
++ {static} String USERS_TABLE
++ {static} String USER_NAME
++ {static} String USER_PWD
++ {static} String USER_EMAIL
++ {static} String USER_PHONE
++ {static} int DATABASE_VERSION
+- Context context
++ void onCreate(SQLiteDatabase)
++ void onUpgrade(SQLiteDatabase,int,int)
++ void insertUser(String,String,String,String)
++ UserDetails getUserByEmail(String)
++ void fetchData()
+}
+
+
+class com.example.myapplication.Login {
+# void onCreate(Bundle)
+}
+
+class com.example.myapplication.ScheduleBroadCastReceiver {
++ void onReceive(Context,Intent)
+}
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.ListOfIceCreamShops
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.RegistrationScreen
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.RecyclerView
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.ListOfMuseums
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.LoginScreen
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.ListOfCafes
+androidx.fragment.app.Fragment <|-- com.example.myapplication.RegisterFragment
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.item_activity
+com.example.myapplication.Adapter <|-- com.example.myapplication.ActivityAdapter
+com.example.myapplication.ActivityAdapter +.. com.example.myapplication.ActivityAdapter$OnItemClickListener
+com.example.myapplication.ActivityAdapter +.. com.example.myapplication.ActivityAdapter$ViewHolder
+com.example.myapplication.ViewHolder <|-- com.example.myapplication.ActivityAdapter$ViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.ListOfBeaches
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.SuggestionScreen
+androidx.fragment.app.Fragment <|-- com.example.myapplication.LoginFragment
+android.database.sqlite.SQLiteOpenHelper <|-- com.example.myapplication.HelperDB
+androidx.appcompat.app.AppCompatActivity <|-- com.example.myapplication.Login
+android.content.BroadcastReceiver <|-- com.example.myapplication.ScheduleBroadCastReceiver
+@enduml
