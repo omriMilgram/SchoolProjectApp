@@ -14,13 +14,25 @@
         android:scaleType="centerCrop"
         android:src="@drawable/backround2" />
 
-    <!-- שכבת כהות עדינה לקריאות -->
+    <!-- שכבת כהות -->
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#66000000" />
 
-    <!-- תוכן -->
+    <!-- כפתור של השעון בצד ימין למעלה -->
+    <TextView
+        android:id="@+id/btEnableNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🕗"
+        android:textSize="48sp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="#FFFFFF" />
+
+    <!-- תוכן מרכזי -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,7 +40,6 @@
         android:padding="32dp"
         android:gravity="center">
 
-        <!-- כותרת -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
@@ -43,7 +54,6 @@
             android:shadowRadius="4"
             android:layout_marginBottom="32dp" />
 
-        <!-- כפתור התחלה -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btButtonToLogin"
             style="@style/Widget.MaterialComponents.Button"
@@ -58,6 +68,8 @@
             android:paddingStart="32dp"
             android:paddingEnd="32dp"
             android:paddingTop="12dp"
-            android:paddingBottom="12dp" />
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="16dp" />
+
     </LinearLayout>
 </FrameLayout>

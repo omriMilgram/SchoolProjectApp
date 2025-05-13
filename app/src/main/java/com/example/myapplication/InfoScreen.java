@@ -16,6 +16,10 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * InfoScreen displays detailed information about a selected activity.
+ * The user can view description, location, image, and mark the activity as visited.
+ */
 public class InfoScreen extends AppCompatActivity {
 
     FirebaseFirestore db;
@@ -23,14 +27,19 @@ public class InfoScreen extends AppCompatActivity {
     ImageView ivActivityImage;
     Button btnBack, btnVisitedStatus;
 
-
-
+    /**
+     * Initializes the UI and loads activity details from Firestore.
+     * Allows the user to mark the activity as visited, return to the previous screen,
+     * and open the activity's location link in a browser.
+     *
+     * @param savedInstanceState Saved state of the activity, if available.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_screen);
 
-        // קבלת מזהה הפעילות מהאינטנט
+        // Get the activity name from the intent
         String activityName = getIntent().getStringExtra("activityName");
         if (activityName == null) {
             Toast.makeText(this, "Activity not found", Toast.LENGTH_SHORT).show();
@@ -38,7 +47,7 @@ public class InfoScreen extends AppCompatActivity {
             return;
         }
 
-        // אתחול רכיבים
+        // Initialize views
         tvActivityName = findViewById(R.id.tvActivityName);
         tvActivityType = findViewById(R.id.tvActivityType);
         tvActivityLocation = findViewById(R.id.tvActivityLocation);
@@ -50,11 +59,12 @@ public class InfoScreen extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnVisitedStatus = findViewById(R.id.btnVisitedStatus);
 
+        // Load visited status from SharedPreferences
         SharedPreferences prefs = getSharedPreferences("VisitedPrefs", MODE_PRIVATE);
         boolean visited = prefs.getBoolean(activityName, false);
         updateVisitedButton(btnVisitedStatus, visited);
 
-// לחיצה על הכפתור
+        // Toggle visited status on button click
         btnVisitedStatus.setOnClickListener(v -> {
             boolean newStatus = !prefs.getBoolean(activityName, false);
             prefs.edit().putBoolean(activityName, newStatus).apply();
@@ -66,11 +76,10 @@ public class InfoScreen extends AppCompatActivity {
             }
         });
 
-
-        // כפתור חזרה
+        // Back button closes the activity
         btnBack.setOnClickListener(view -> finish());
 
-        // שליפת מידע מה־Firestore
+        // Fetch data from Firestore based on the activity name
         db = FirebaseFirestore.getInstance();
         db.collection("Activities")
                 .whereEqualTo("ActivityName", activityName)
@@ -78,7 +87,6 @@ public class InfoScreen extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-
 
                         ActivitiesFeatures data = new ActivitiesFeatures(document.getString("ActivityName"),
                                 document.getString("Location"),
@@ -89,6 +97,7 @@ public class InfoScreen extends AppCompatActivity {
                                 document.getString("imageLink"),
                                 document.getString("type"));
 
+                        // Set UI elements with fetched data
                         tvActivityName.setText(data.getActivityName());
                         tvActivityType.setText("Type: " + data.getType());
                         tvActivityLocation.setText("Location: " + data.getLocation());
@@ -96,7 +105,7 @@ public class InfoScreen extends AppCompatActivity {
                         tvActivityAudience.setText("Target audience: " + data.getTargetAudience());
                         tvActivityMoreInfo.setText(data.getAbout());
 
-                        // Add click listener to location text to open the link
+                        // Open location link on click
                         final String locationLink = data.getLocationLink();
                         if (locationLink != null && !locationLink.isEmpty()) {
                             tvActivityLocation.setOnClickListener(view -> {
@@ -104,20 +113,18 @@ public class InfoScreen extends AppCompatActivity {
                                 startActivity(browserIntent);
                             });
                         }
-                        // After setting all your text fields, add:
+
+                        // Load image with Glide or set default image
                         String imageUrl = data.getImageLink();
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             Glide.with(this)
                                     .load(imageUrl)
-                                    .placeholder(R.drawable.logoapp) // Optional: show a placeholder while loading
-                                    .error(R.drawable.logoapp) // Optional: show an error image if loading fails
+                                    .placeholder(R.drawable.logoapp)
+                                    .error(R.drawable.logoapp)
                                     .into(ivActivityImage);
                         } else {
-                            // Set a default image if no URL is available
                             ivActivityImage.setImageResource(R.drawable.logoapp);
                         }
-
-
                     } else {
                         Toast.makeText(this, "Activity not found in database", Toast.LENGTH_SHORT).show();
                         finish();
@@ -126,15 +133,19 @@ public class InfoScreen extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Updates the "Visited" button UI based on the current status.
+     *
+     * @param button  The button to update.
+     * @param visited True if the activity is marked as visited; false otherwise.
+     */
     private void updateVisitedButton(Button button, boolean visited) {
         if (visited) {
             button.setText("Visited");
             button.setBackgroundTintList(getResources().getColorStateList(android.R.color.holo_red_dark));
-
         } else {
             button.setText("Mark as Visited");
             button.setBackgroundTintList(getResources().getColorStateList(android.R.color.darker_gray));
         }
     }
-
 }

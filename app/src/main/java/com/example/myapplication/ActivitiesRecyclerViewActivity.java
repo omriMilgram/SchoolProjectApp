@@ -3,8 +3,10 @@ package com.example.myapplication;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,8 @@ import retrofit2.Response;
 
 public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
 
-    EditText nameSearch, genreSearch;
+    EditText nameSearch;
+    Spinner spinnerSearchByType;
     Context context;
     Button searchByNameButton, buttonSearchByType, showAllButton, btBackToSuggestion;
     TextView textViewWeather;
@@ -33,7 +36,7 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
     List<ActivitiesFeatures> data = new ArrayList<>();
     FirebaseFirestore db;
 
-    private static final String TAG = "API_For_Check";
+    private static final String TAG = "ActivitiesRecyclerView";
     private static final String API_KEY = "4af745b948b1c2b9184c06d8aa357ec0";
 
     @Override
@@ -48,7 +51,7 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
         buttonSearchByType = findViewById(R.id.buttonSearchByType);
         showAllButton = findViewById(R.id.buttonShowAll);
         nameSearch = findViewById(R.id.editTextSearchByName);
-        genreSearch = findViewById(R.id.editTextSearchByType);
+        spinnerSearchByType = findViewById(R.id.spinnerSearchByType);
         activitiesRecyclerView = findViewById(R.id.recyclerViewActivitiesList);
         textViewWeather = findViewById(R.id.textViewWeather);
         btBackToSuggestion = findViewById(R.id.btBackToSuggestion);
@@ -57,10 +60,22 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
         adapter = new ActivityAdapter(this, data);
         activitiesRecyclerView.setAdapter(adapter);
 
+        // הגדרת Spinner
+        List<String> types = new ArrayList<>();
+        types.add("Select type");
+        types.add("Food");
+        types.add("Amusements");
+        types.add("Beaches");
+        types.add("Education");
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, types);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSearchByType.setAdapter(spinnerAdapter);
+
         makeData();
 
         searchByNameButton.setOnClickListener(v -> searchByName());
-        buttonSearchByType.setOnClickListener(v -> searchByGenre());
+        buttonSearchByType.setOnClickListener(v -> searchByType());
         showAllButton.setOnClickListener(v -> showAllActivities());
         btBackToSuggestion.setOnClickListener(v -> finish());
 
@@ -117,17 +132,23 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
         String nameQuery = nameSearch.getText().toString().trim();
         if (!nameQuery.isEmpty()) {
             db.collection("Activities")
-                    .whereEqualTo("ActivityName", nameQuery)
+                    .orderBy("ActivityName")
+                    .startAt(nameQuery)
+                    .endAt(nameQuery + "\uf8ff")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             data.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                try {
-                                    ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
-                                    data.add(activity);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error converting document: " + e.getMessage());
+                            if (task.getResult().isEmpty()) {
+                                Toast.makeText(context, "No activities found by that name", Toast.LENGTH_SHORT).show();
+                            } else {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    try {
+                                        ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
+                                        data.add(activity);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Error converting document: " + e.getMessage());
+                                    }
                                 }
                             }
                             adapter.updateData(data);
@@ -141,31 +162,35 @@ public class ActivitiesRecyclerViewActivity extends AppCompatActivity {
         }
     }
 
-    public void searchByGenre() {
-        String genreQuery = genreSearch.getText().toString().trim();
-        if (!genreQuery.isEmpty()) {
+    public void searchByType() {
+        String typeQuery = spinnerSearchByType.getSelectedItem().toString();
+        if (!typeQuery.equals("Select type")) {
             db.collection("Activities")
-                    .whereEqualTo("type", genreQuery)
+                    .whereEqualTo("type", typeQuery)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             data.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                try {
-                                    ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
-                                    data.add(activity);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error converting document: " + e.getMessage());
+                            if (task.getResult().isEmpty()) {
+                                Toast.makeText(context, "No activities found for this type", Toast.LENGTH_SHORT).show();
+                            } else {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    try {
+                                        ActivitiesFeatures activity = document.toObject(ActivitiesFeatures.class);
+                                        data.add(activity);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Error converting document: " + e.getMessage());
+                                    }
                                 }
                             }
                             adapter.updateData(data);
                         } else {
-                            Log.w(TAG, "Error searching by genre.", task.getException());
-                            Toast.makeText(context, "Error searching by genre", Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "Error searching by type.", task.getException());
+                            Toast.makeText(context, "Error searching by type", Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
-            Toast.makeText(context, "Please enter a genre", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Please select a type", Toast.LENGTH_SHORT).show();
         }
     }
 

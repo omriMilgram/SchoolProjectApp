@@ -100,15 +100,11 @@
             android:layout_marginStart="8dp" />
 
         <!-- חיפוש לפי סוג -->
-        <EditText
-            android:id="@+id/editTextSearchByType"
+        <Spinner
+            android:id="@+id/spinnerSearchByType"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Enter activity type"
-            android:inputType="text"
-            android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#DDDDDD"
+            android:backgroundTint="#FFFFFF"
             app:layout_constraintTop_toBottomOf="@+id/editTextSearchByName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonSearchByType"
@@ -122,8 +118,8 @@
             android:textColor="#FFFFFF"
             android:backgroundTint="@color/purple_500"
             app:cornerRadius="12dp"
-            app:layout_constraintTop_toTopOf="@+id/editTextSearchByType"
-            app:layout_constraintBottom_toBottomOf="@+id/editTextSearchByType"
+            app:layout_constraintTop_toTopOf="@+id/spinnerSearchByType"
+            app:layout_constraintBottom_toBottomOf="@+id/spinnerSearchByType"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="8dp" />
 
@@ -133,7 +129,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/editTextSearchByType"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerSearchByType"
             app:layout_constraintBottom_toTopOf="@+id/buttonShowAll"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -167,7 +163,6 @@
             app:strokeWidth="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

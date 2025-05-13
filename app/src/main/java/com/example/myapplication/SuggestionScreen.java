@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,40 +31,50 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * SuggestionScreen is an Activity that provides the functionality to capture a photo,
+ * save it to the gallery, display weather data, and navigate to the activities list.
+ */
 public class SuggestionScreen extends AppCompatActivity {
 
-    ImageView ivPhoto;
-    Button btCamera, btSavePicture, btActivityList, btButtonBackToLogin; // הוספת כפתור למעבר לרשימה
-    ActivityResultLauncher<Intent> arSmall;
-    Bitmap currentBitmap; // משתנה לשמירת התמונה שצולמה
-    TextView tvWeather;
+    private ImageView ivPhoto;
+    private Button btCamera, btSavePicture, btActivityList, btButtonBackToLogin;
+    private ActivityResultLauncher<Intent> arSmall;
+    private Bitmap currentBitmap;
+    private TextView tvWeather;
 
     private static final int CAMERA_PERMISSION_CODE = 100;
-    private static final String TAG = "API_For_Check";
+    private static final String TAG = "TAG_SUGGESTION_SCREEN";
     private static final String API_KEY = "4af745b948b1c2b9184c06d8aa357ec0";
 
+    /**
+     * Initializes the activity and sets up the necessary views and listeners.
+     * It also handles the setup of the camera and weather API calls.
+     *
+     * @param savedInstanceState A Bundle containing the activity's previously saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion_screen);
 
-        // חיבור ל-Views
+        // Initialize views
         btCamera = findViewById(R.id.btButtonToTakeAPicture);
         btSavePicture = findViewById(R.id.btButtonSavePicture);
-        btActivityList = findViewById(R.id.btButtonToActivityList); // כפתור למעבר לרשימה
+        btActivityList = findViewById(R.id.btButtonToActivityList);
         ivPhoto = findViewById(R.id.imageView);
         tvWeather = findViewById(R.id.tvWeather);
         btButtonBackToLogin = findViewById(R.id.btButtonBackToLogin);
 
+        // Set back button listener
         btButtonBackToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // סוגר את המסך הנוכחי
+                finish(); // Close the current screen
             }
         });
 
-
-        // רישום ה-ActivityResultLauncher
+        // Register ActivityResultLauncher for camera intent
         arSmall = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -75,28 +84,28 @@ public class SuggestionScreen extends AppCompatActivity {
                             Intent data = result.getData();
                             if (data != null && data.getExtras() != null) {
                                 currentBitmap = (Bitmap) data.getExtras().get("data");
-                                ivPhoto.setImageBitmap(currentBitmap); // הצגת התמונה ב-ImageView
+                                ivPhoto.setImageBitmap(currentBitmap); // Display photo
                             }
                         }
                     }
                 });
 
-        // פעולה בלחיצה על כפתור המצלמה
+        // Camera button click listener
         btCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (checkCameraPermission()) {
-                    // אם יש הרשאה, פתח את המצלמה
+                    // If permission granted, open camera
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     arSmall.launch(intent);
                 } else {
-                    // בקשת הרשאה
+                    // Request camera permission if not granted
                     requestCameraPermission();
                 }
             }
         });
 
-        // פעולה בלחיצה על כפתור שמירת תמונה
+        // Save picture button click listener
         btSavePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +117,7 @@ public class SuggestionScreen extends AppCompatActivity {
             }
         });
 
-        // פעולה בלחיצה על כפתור למעבר לרשימת הפעילויות
+        // Activity list button click listener
         btActivityList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +126,7 @@ public class SuggestionScreen extends AppCompatActivity {
             }
         });
 
+        // Fetch weather data from API
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<WeatherResponse> call = apiService.getWeatherData("Tel Aviv", "metric", API_KEY);
 
@@ -125,8 +135,8 @@ public class SuggestionScreen extends AppCompatActivity {
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     WeatherResponse weather = response.body();
-                    double temp = weather.getMain().getTemp(); // temperature only
-                    String result = "Temp: " + temp + "°C"; // display temperature only
+                    double temp = weather.getMain().getTemp();
+                    String result = "Temp: " + temp + "°C";
                     tvWeather.setText(result);
                 } else {
                     tvWeather.setText("Error retrieving data from server. Code:  " + response.code());
@@ -142,28 +152,39 @@ public class SuggestionScreen extends AppCompatActivity {
         });
     }
 
-    // פונקציה לבדוק אם יש הרשאת מצלמה
+    /**
+     * Checks if the app has permission to access the camera.
+     *
+     * @return True if the app has permission, false otherwise.
+     */
     private boolean checkCameraPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
-    // בקשת הרשאת מצלמה
+    /**
+     * Requests permission to access the camera if it is not already granted.
+     */
     private void requestCameraPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-            // הצגת דיאלוג עם הסבר לפני בקשת הרשאה
             Toast.makeText(this, "Camera permission is required to take pictures", Toast.LENGTH_LONG).show();
         }
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
     }
 
-    // טיפול בתוצאות בקשת הרשאה
+    /**
+     * Handles the result of the camera permission request.
+     *
+     * @param requestCode The request code passed in requestPermissions().
+     * @param permissions The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera permission granted", Toast.LENGTH_SHORT).show();
-                // פתח מצלמה אם ההרשאה התקבלה
+                // Open camera if permission is granted
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 arSmall.launch(intent);
             } else {
@@ -172,12 +193,16 @@ public class SuggestionScreen extends AppCompatActivity {
         }
     }
 
-    // פונקציה לשמירת תמונה בגלריה
+    /**
+     * Saves the captured image to the device's gallery.
+     *
+     * @param bitmap The image to be saved.
+     */
     private void saveImageToGallery(Bitmap bitmap) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "captured_image_" + System.currentTimeMillis() + ".jpg");
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/MyApp"); // נתיב שמירה מותאם אישית
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/MyApp");
 
         Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         if (uri != null) {
